@@ -1,0 +1,528 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en" class="scroll-smooth"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Interactive ARDS Clinical Dashboard&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Chosen Palette: Calm Medical Harmony --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Application Structure Plan: The application is structured as a clinical workflow dashboard, guiding the user from initial diagnosis to long-term prognosis. This non-linear structure, using a sticky navigation bar and thematic sections, is chosen over the report's original format to provide rapid, task-oriented access to information. Key interactions include an interactive diagnostic criteria checklist, a pathophysiology timeline, a tabbed management toolkit, and data visualizations for etiology and outcomes. This design prioritizes clinical usability and quick reference, allowing practitioners to find relevant information based on their immediate needs rather than reading a linear document. --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Visualization &amp; Content Choices:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- Berlin Criteria (Table): Goal: Inform/Organize -&gt; Method: Interactive Accordion (HTML/JS) -&gt; Interaction: Click to expand/collapse criteria details -&gt; Justification: Cleaner and more engaging than a static table, focuses user attention.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- ARDS Etiology (Donut Chart): Goal: Show Proportions -&gt; Method: Chart.js Donut Chart -&gt; Interaction: Hover for tooltips with percentages -&gt; Justification: Quickly conveys the most common causes of ARDS.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- Pathophysiology Phases (Timeline): Goal: Show Process -&gt; Method: Interactive Stepper (HTML/CSS/JS) -&gt; Interaction: Click on a phase to view its detailed description -&gt; Justification: Visualizes the temporal progression of the disease in a clear, digestible format.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- PICS Prevalence (Bar Chart): Goal: Compare -&gt; Method: Chart.js Bar Chart -&gt; Interaction: Hover for exact prevalence percentages -&gt; Justification: Effectively compares the long-term impact across physical, cognitive, and mental health domains.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- Management Toolkit (Tabs): Goal: Organize -&gt; Method: Tabbed Interface (HTML/JS) -&gt; Interaction: Click tabs to switch between management pillars -&gt; Justification: Organizes a large volume of complex treatment information into logical, manageable sections.</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Inter', sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #F8F7F4;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #3D405B;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.chart-container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-width: 500px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-left: auto;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-right: auto;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 300px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-height: 350px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@media (min-width: 768px) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>.chart-container {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>height: 350px;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>max-height: 400px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-link {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 2px solid transparent;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-link.active, .nav-link:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #3A86FF;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom-color: #3A86FF;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab-btn.active {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #3A86FF;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #FFFFFF;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.phase.active .phase-circle {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #3A86FF;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-color: #3A86FF;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #FFFFFF;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.phase.active .phase-title {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #3A86FF;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.accordion-content {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-height: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: max-height 0.5s ease-in-out;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="antialiased"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;header class="bg-white shadow-sm sticky top-0 z-50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;nav class="container mx-auto px-4 sm:px-6 lg:px-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex items-center justify-between h-16"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex-shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h1 class="text-xl font-bold text-[#3D405B]"&gt;ARDS Clinical Dashboard&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="hidden md:block"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="ml-10 flex items-baseline space-x-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#diagnosis" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Diagnosis&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#pathophysiology" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Pathophysiology&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#management" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Management&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#prognosis" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Prognosis&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- New Download Button --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button id="downloadBtn" class="bg-[#3A86FF] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[#2A75E5] transition-colors duration-300"&gt;Download File&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Mobile menu button, not implemented but good for responsiveness --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="md:hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button type="button" class="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/nav&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;section id="introduction" class="text-center mb-16"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-3xl md:text-4xl font-bold mb-4"&gt;Acute Respiratory Distress Syndrome&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="max-w-3xl mx-auto text-lg text-gray-600"&gt;An interactive guide to the diagnosis, pathophysiology, management, and prognosis of ARDS, based on current evidence and clinical guidelines. This tool is designed to support critical care professionals in understanding and treating this complex syndrome.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="diagnosis" class="mb-16 scroll-mt-20"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 class="text-2xl font-bold text-center mb-2"&gt;Diagnosis &amp; Severity&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-center text-gray-600 max-w-2xl mx-auto mb-8"&gt;ARDS diagnosis is based on the 2012 Berlin Definition, which requires four key criteria. This section provides an interactive way to explore these criteria and understand the severity classification based on oxygenation.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="p-6 md:p-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h4 class="text-xl font-semibold mb-4"&gt;The Berlin Definition: Interactive Criteria&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="accordion-container" class="space-y-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="accordion-item border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header w-full text-left p-4 font-medium flex justify-between items-center transition duration-300 ease-in-out bg-gray-50 hover:bg-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;1. Timing&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="accordion-icon text-xl transform transition-transform duration-300"&gt;+&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="p-4 border-t text-gray-700"&gt;Acute onset within 1 week of a known clinical insult or new/worsening respiratory symptoms. This criterion helps distinguish ARDS from more chronic pulmonary conditions.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="accordion-item border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header w-full text-left p-4 font-medium flex justify-between items-center transition duration-300 ease-in-out bg-gray-50 hover:bg-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;2. Chest Imaging&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="accordion-icon text-xl transform transition-transform duration-300"&gt;+&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="p-4 border-t text-gray-700"&gt;Bilateral opacities on chest radiograph or CT scan, not fully explained by effusions, lobar/lung collapse, or nodules. These opacities are consistent with pulmonary edema.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="accordion-item border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header w-full text-left p-4 font-medium flex justify-between items-center transition duration-300 ease-in-out bg-gray-50 hover:bg-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;3. Origin of Edema&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="accordion-icon text-xl transform transition-transform duration-300"&gt;+&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="p-4 border-t text-gray-700"&gt;Respiratory failure not fully explained by cardiac failure or fluid overload. An objective assessment (e.g., echocardiogram) is needed to exclude hydrostatic edema if no risk factor is present.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="accordion-item border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header w-full text-left p-4 font-medium flex justify-between items-center transition duration-300 ease-in-out bg-gray-50 hover:bg-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;4. Oxygenation (Severity)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="accordion-icon text-xl transform transition-transform duration-300"&gt;+&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="p-4 border-t text-gray-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="mb-2"&gt;Impaired oxygenation is measured by the PaO₂/FiO₂ ratio on a minimum PEEP of ≥ 5 cmH₂O. This ratio determines the severity:&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;ul class="list-disc list-inside space-y-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Mild:&lt;/span&gt; 200 mmHg &amp;lt; PaO₂/FiO₂ ≤ 300 mmHg&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Moderate:&lt;/span&gt; 100 mmHg &amp;lt; PaO₂/FiO₂ ≤ 200 mmHg&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Severe:&lt;/span&gt; PaO₂/FiO₂ ≤ 100 mmHg&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="pathophysiology" class="mb-16 scroll-mt-20"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 class="text-2xl font-bold text-center mb-2"&gt;Etiology &amp; Pathophysiology&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-center text-gray-600 max-w-2xl mx-auto mb-8"&gt;ARDS is triggered by various direct or indirect lung injuries, leading to a complex inflammatory cascade. This section visualizes the common causes and the progression of the disease through its distinct phases.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid md:grid-cols-2 gap-8 items-start"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-xl shadow-md"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h4 class="text-xl font-semibold mb-4 text-center"&gt;Common Causes of ARDS&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-center text-sm text-gray-500 mb-4"&gt;Sepsis is the single most predominant cause. Hover over the chart for details.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="chart-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;canvas id="etiologyChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-xl shadow-md"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h4 class="text-xl font-semibold mb-4 text-center"&gt;The Three Phases of ARDS&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;p class="text-center text-sm text-gray-500 mb-6"&gt;Click on each phase to learn about its key characteristics.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="phase-container" class="relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="absolute left-4 top-4 bottom-4 w-0.5 bg-gray-200"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="space-y-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="phase pl-10 cursor-pointer active" data-phase="exudative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="absolute left-0 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-white border-2 border-gray-200 phase-circle"&gt;1&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h5 class="font-medium phase-title"&gt;Exudative Phase (Days 1-7)&lt;/h5&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="phase pl-10 cursor-pointer" data-phase="proliferative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="absolute left-0 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-white border-2 border-gray-200 phase-circle"&gt;2&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h5 class="font-medium phase-title"&gt;Proliferative Phase (Days 7-21)&lt;/h5&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                             </span>&lt;div class="phase pl-10 cursor-pointer" data-phase="fibrotic"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="absolute left-0 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-white border-2 border-gray-200 phase-circle"&gt;3&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h5 class="font-medium phase-title"&gt;Fibrotic Phase (&amp;gt;21 Days)&lt;/h5&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="phase-description" class="mt-6 p-4 bg-blue-50 rounded-lg text-gray-700 min-h-[150px]"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="management" class="mb-16 scroll-mt-20"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 class="text-2xl font-bold text-center mb-2"&gt;Management Toolkit&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-center text-gray-600 max-w-2xl mx-auto mb-8"&gt;ARDS management is primarily supportive, focusing on lung-protective ventilation and evidence-based adjunctive therapies. Use the tabs below to navigate the core components of ARDS care.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="max-w-4xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mb-4 flex justify-center border-b border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn py-2 px-4 font-medium text-gray-500 hover:text-blue-600 active" data-tab="ventilation"&gt;Ventilation Strategy&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn py-2 px-4 font-medium text-gray-500 hover:text-blue-600" data-tab="adjunctive"&gt;Adjunctive Therapies&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn py-2 px-4 font-medium text-gray-500 hover:text-blue-600" data-tab="supportive"&gt;Supportive Care&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="tab-content-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tab-content active" id="ventilation"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-white p-6 rounded-xl shadow-md grid md:grid-cols-2 gap-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;Low Tidal Volume Ventilation&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600"&gt;The cornerstone of ARDS care. Aims to prevent ventilator-induced lung injury (VILI) by avoiding overdistension of the "baby lung."&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;ul class="mt-2 list-disc list-inside text-gray-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Tidal Volume:&lt;/span&gt; 4-8 mL/kg predicted body weight.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Key Evidence:&lt;/span&gt; ARDSNet trial showed a significant mortality reduction with 6 mL/kg vs 12 mL/kg.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                             </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;Pressure Limitation &amp; PEEP&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600"&gt;Essential for preventing barotrauma and atelectrauma (injury from repetitive alveolar collapse and reopening).&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;ul class="mt-2 list-disc list-inside text-gray-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Plateau Pressure:&lt;/span&gt; Goal is &amp;lt; 30 cmH₂O.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;&lt;span class="font-semibold"&gt;PEEP:&lt;/span&gt; Optimized to maintain alveolar recruitment while avoiding overdistension and hemodynamic compromise. Often guided by ARDSNet PEEP/FiO₂ tables.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tab-content hidden" id="adjunctive"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;div class="bg-white p-6 rounded-xl shadow-md grid sm:grid-cols-2 lg:grid-cols-2 gap-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="p-4 border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;Prone Positioning&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600 text-sm"&gt;Strongly recommended for severe ARDS (PaO₂/FiO₂ ≤ 100). Improves V/Q matching and reduces VILI. PROSEVA trial showed a significant mortality benefit when used for &gt;12 hours/day.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="p-4 border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;Neuromuscular Blockers&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600 text-sm"&gt;Conditional recommendation for early, severe ARDS (PaO₂/FiO₂ &amp;lt; 150) to improve patient-ventilator synchrony. Evidence is mixed (ACURASYS vs. ROSE trials).&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="p-4 border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;Corticosteroids&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600 text-sm"&gt;Recent guidelines suggest use to mitigate the inflammatory response. Patient selection and timing are critical. Not a routine therapy for all ARDS patients.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="p-4 border rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;ECMO&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600 text-sm"&gt;A salvage therapy for refractory severe ARDS when conventional ventilation fails. Considered for patients with PaO₂/FiO₂ &amp;lt; 80 despite optimization.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tab-content hidden" id="supportive"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-white p-6 rounded-xl shadow-md grid md:grid-cols-2 gap-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;Conservative Fluid Management&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600"&gt;After initial resuscitation, a conservative fluid strategy is recommended. The FACTT trial showed this approach leads to more ventilator-free days and shorter ICU stays without increasing non-pulmonary organ failure.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                             </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-lg mb-2"&gt;Nutritional Support&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-gray-600"&gt;Early enteral nutrition (within 24-48 hours) is crucial. Aim for 25-30 kcal/kg/day and higher protein intake (1.2-2.0 g/kg/day) to combat catabolism and support tissue repair.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="prognosis" class="scroll-mt-20"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 class="text-2xl font-bold text-center mb-2"&gt;Prognosis &amp; Life After ARDS&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-center text-gray-600 max-w-2xl mx-auto mb-8"&gt;While mortality remains high, many patients survive ARDS. However, survivorship is often complicated by Post-Intensive Care Syndrome (PICS), a collection of long-term physical, cognitive, and mental health impairments.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid md:grid-cols-2 gap-8 items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-xl shadow-md text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h4 class="text-xl font-semibold mb-2"&gt;Mortality Rate&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-5xl font-bold text-[#E76F51]"&gt;25-46%&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-600 mt-2"&gt;Mortality varies based on severity, underlying etiology (sepsis-induced is worse), and patient comorbidities.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-xl shadow-md"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h4 class="text-xl font-semibold mb-4 text-center"&gt;Prevalence of PICS in Survivors&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;p class="text-center text-sm text-gray-500 mb-4"&gt;Hover over the bars to see the prevalence of major impairments.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="chart-container" style="max-width: 100%;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;canvas id="picsChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/main&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;footer class="bg-white mt-16 border-t"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;&amp;copy; 2024 ARDS Clinical Dashboard. For educational purposes only.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', function () {</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// --- Download Button Logic ---</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const downloadBtn = document.getElementById('downloadBtn');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (downloadBtn) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>downloadBtn.addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const htmlContent = document.documentElement.outerHTML;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const blob = new Blob([htmlContent], { type: 'text/html' });</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const url = URL.createObjectURL(blob);</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const a = document.createElement('a');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>a.href = url;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>a.download = 'ARDS_Dashboard.html';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>document.body.appendChild(a);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>a.click();</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>document.body.removeChild(a);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>URL.revokeObjectURL(url);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// --- End Download Button Logic ---</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const chartLabelColor = '#3D405B';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const chartGridColor = 'rgba(0, 0, 0, 0.05)';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const wrapText = (ctx, text, x, y, maxWidth, lineHeight) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const words = text.split(' ');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let line = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>for (let n = 0; n &lt; words.length; n++) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const testLine = line + words[n] + ' ';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const metrics = ctx.measureText(testLine);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const testWidth = metrics.width;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (testWidth &gt; maxWidth &amp;&amp; n &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>ctx.fillText(line, x, y);</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>line = words[n] + ' ';</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>y += lineHeight;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>line = testLine;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillText(line, x, y);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>Chart.Tooltip.positioners.custom = function(items) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!items.length) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>return false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const pos = this.getAveragePosition(items);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>x: pos.x,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>y: pos.y,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const etiologyCtx = document.getElementById('etiologyChart')?.getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (etiologyCtx) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>new Chart(etiologyCtx, {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>type: 'doughnut',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>labels: ['Sepsis', 'Pneumonia', 'Aspiration', 'Trauma', 'Other'],</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>label: 'ARDS Causes',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>data: [32, 23, 15, 10, 20],</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>backgroundColor: ['#E76F51', '#F4A261', '#E9C46A', '#2A9D8F', '#264653'],</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>borderColor: '#F8F7F4',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>borderWidth: 4,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>hoverOffset: 8</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>options: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>maintainAspectRatio: false,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>plugins: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>legend: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>position: 'bottom',</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>labels: {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>color: chartLabelColor,</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>font: { family: "'Inter', sans-serif" }</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>tooltip: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>callbacks: {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>label: function(context) {</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>return `${context.label}: ${context.raw}%`;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>bodyFont: { family: "'Inter', sans-serif", size: 14 },</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>titleFont: { family: "'Inter', sans-serif", size: 16 },</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const picsCtx = document.getElementById('picsChart')?.getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (picsCtx) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>new Chart(picsCtx, {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>type: 'bar',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>labels: ['Physical Impairment', 'Cognitive Impairment', 'Mental Health Issues'],</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>label: 'Prevalence in Survivors (%)',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>data: [50, 71, 44],</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>backgroundColor: ['#2A9D8F', '#E9C46A', '#F4A261'],</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>borderRadius: 4</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>options: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>indexAxis: 'y',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>maintainAspectRatio: false,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>scales: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>x: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>beginAtZero: true,</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>max: 100,</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>grid: { color: chartGridColor },</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>ticks: { color: chartLabelColor, font: { family: "'Inter', sans-serif" } }</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>y: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>grid: { display: false },</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>ticks: { color: chartLabelColor, font: { family: "'Inter', sans-serif", size: 14 } }</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>plugins: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>legend: { display: false },</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>tooltip: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>callbacks: {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>label: function(context) {</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>let label = context.dataset.label || '';</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>if (label) {</p>
+<p class="p1"><span class="Apple-converted-space">                                            </span>label += ': ';</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>if (context.parsed.x !== null) {</p>
+<p class="p1"><span class="Apple-converted-space">                                            </span>label += context.parsed.x + '%';</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>return label;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const accordionItems = document.querySelectorAll('.accordion-item');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>accordionItems.forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const header = item.querySelector('.accordion-header');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const content = item.querySelector('.accordion-content');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const icon = item.querySelector('.accordion-icon');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>header.addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const isOpen = content.style.maxHeight;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (isOpen) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>content.style.maxHeight = null;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>icon.classList.remove('rotate-45');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>content.style.maxHeight = content.scrollHeight + 'px';</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>icon.classList.add('rotate-45');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const phaseData = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>exudative: 'Characterized by diffuse alveolar damage. An influx of inflammatory cells and protein-rich fluid into the alveoli leads to non-cardiogenic pulmonary edema, formation of hyaline membranes, and severe impairment of gas exchange.',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>proliferative: 'The body attempts to repair the damage. Type II pneumocytes proliferate to replace damaged cells, and fibroblasts migrate into the alveolar space, beginning the process of laying down collagen.',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fibrotic: 'In some patients, the repair process becomes dysregulated, leading to extensive collagen deposition and pulmonary fibrosis. This remodels the lung architecture, causing long-term respiratory impairment.'</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const phases = document.querySelectorAll('.phase');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const phaseDescription = document.getElementById('phase-description');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const updatePhase = (activePhase) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>phases.forEach(p =&gt; p.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">                </span>activePhase.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>phaseDescription.textContent = phaseData[activePhase.dataset.phase];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>phases.forEach(phase =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>phase.addEventListener('click', () =&gt; updatePhase(phase));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>updatePhase(document.querySelector('.phase.active'));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tabBtns = document.querySelectorAll('.tab-btn');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tabContents = document.querySelectorAll('.tab-content');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tabBtns.forEach(btn =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btn.addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tabBtns.forEach(b =&gt; b.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>btn.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const tabId = btn.dataset.tab;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tabContents.forEach(content =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>if (content.id === tabId) {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>content.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>content.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>content.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>content.classList.remove('active');</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const navLinks = document.querySelectorAll('a.nav-link');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sections = document.querySelectorAll('div[id]');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const observer = new IntersectionObserver((entries) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>entries.forEach(entry =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (entry.isIntersecting) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>navLinks.forEach(link =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, { rootMargin: "-50% 0px -50% 0px" });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>sections.forEach(section =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>observer.observe(section);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
